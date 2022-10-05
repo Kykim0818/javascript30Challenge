@@ -1,93 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>JS + CSS Clock</title>
-  </head>
-  <body>
-    <div class="clock">
-      <div class="clock-face">
-        <div class="hand hour-hand"></div>
-        <div class="hand min-hand"></div>
-        <div class="hand second-hand"></div>
-      </div>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>JS + CSS Clock</title>
+</head>
+
+<body>
+  <div class="clock">
+    <div class="clock-face">
+      <div class="hand hour-hand"></div>
+      <div class="hand min-hand"></div>
+      <div class="hand second-hand"></div>
     </div>
+  </div>
 
-    <style>
-      html {
-        background: #018ded url(https://unsplash.it/1500/1000?image=881&blur=5);
-        background-size: cover;
-        font-family: "helvetica neue";
-        text-align: center;
-        font-size: 10px;
-      }
+  <style>
+    html {
+      background: #018ded url(https://unsplash.it/1500/1000?image=881&blur=5);
+      background-size: cover;
+      font-family: "helvetica neue";
+      text-align: center;
+      font-size: 10px;
+    }
 
-      body {
-        margin: 0;
-        font-size: 2rem;
-        display: flex;
-        flex: 1;
-        min-height: 100vh;
-        align-items: center;
-      }
+    body {
+      margin: 0;
+      font-size: 2rem;
+      display: flex;
+      flex: 1;
+      min-height: 100vh;
+      align-items: center;
+    }
 
-      .clock {
-        width: 30rem;
-        height: 30rem;
-        border: 20px solid white;
-        border-radius: 50%;
-        margin: 50px auto;
-        position: relative;
-        padding: 2rem;
-        box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1), inset 0 0 0 3px #efefef,
-          inset 0 0 10px black, 0 0 10px rgba(0, 0, 0, 0.2);
-      }
+    .clock {
+      width: 30rem;
+      height: 30rem;
+      border: 20px solid white;
+      border-radius: 50%;
+      margin: 50px auto;
+      position: relative;
+      padding: 2rem;
+      box-shadow:
+        0 0 0 4px rgba(0, 0, 0, 0.1),
+        inset 0 0 0 3px #efefef,
+        inset 0 0 10px black,
+        0 0 10px rgba(0, 0, 0, 0.2);
+    }
 
-      .clock-face {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        transform: translateY(
-          -3px
-        ); /* account for the height of the clock hands */
-      }
+    .clock-face {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform: translateY(-3px);
+      /* account for the height of the clock hands */
+    }
 
-      .hand {
-        width: 50%;
-        height: 6px;
-        background: black;
-        position: absolute;
-        top: 50%;
-        transform-origin: right;
-      }
-      
-      .hour-hand {
-        transform: rotate(90deg);
-      }
-    </style>
+    .hand {
+      /*
+      width: 50%;
+      top: 50%;
+      */
+      height: 6px;
+      background: black;
+      position: absolute;
+      transform-origin: right;
+      transition: 1s;
+    }
 
-    <script>
-      let today = new Date();
-      let hours = today.getHours() % 12; // 시
-      let minutes = today.getMinutes(); // 분
+    .min-hand {
+      top: 50%;
+      right: 50%;
+      width: 45%;
+      background: black;
+    }
 
-      let hourDeg = (hours + 3) * 30;
-      console.log('1',hourDeg)
-      hourDeg += (30 * minutes / 60);  
-      console.log(hourDeg)
-      const minDeg = (minutes + 15) * 6;
-      
-      let seconds = today.getSeconds(); // 초
-      const secDeg = (seconds + 15) * 6;
+    .second-hand {
+      height: 3px;
+      top: 50%;
+      width: 50%;
+      background: red;
+      transition: 1s;
+      transition-delay: 0ms;
+    }
 
-      const hourElement = document.querySelector('.hour-hand');
-      const minElement = document.querySelector('.min-hand');
-      const secElement = document.querySelector('.second-hand');
+    .hour-hand {
+      top: 50%;
+      right: 50%;
+      width: 30%;
+      background: black;
+      transform: rotate(90deg);
+    }
+  </style>
 
+  <script>
+    let today = new Date();
+    let hours = today.getHours() % 12; // 시
+    let minutes = today.getMinutes(); // 분
+
+    let hourDeg = (hours + 3) * 30;
+    // hourDeg += (30 * minutes / 60);
+    let minDeg = (minutes + 15) * 6;
+    let seconds = today.getSeconds(); // 초
+    let secDeg = (seconds + 15) * 6;
+
+    const hourElement = document.querySelector('.hour-hand');
+    const minElement = document.querySelector('.min-hand');
+    const secElement = document.querySelector('.second-hand');
+
+    setInterval(() => {
+      secDeg += 6;
+      minDeg += 0.1
+      hourDeg += 1 / 120;
       hourElement.style.transform = `rotate(${hourDeg}deg)`;
       minElement.style.transform = `rotate(${minDeg}deg)`;
       secElement.style.transform = `rotate(${secDeg}deg)`;
-      console.log(hours, minutes, seconds);
-    </script>
-  </body>
+    }, 1000)
+
+    const secondIncrease = () => {
+      seconds++;
+      if (seconds === 60) seconds = 0;
+    }
+  </script>
+</body>
+
 </html>
