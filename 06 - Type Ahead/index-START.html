@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Type Ahead 👀</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <form class="search-form">
+    <input type="text" class="search" placeholder="City or State">
+    <ul class="suggestions">
+      <li>Filter for a city</li>
+      <li>or a state</li>
+    </ul>
+  </form>
+  <script>
+    let data;
+    var xmlhttp = new XMLHttpRequest();
+    const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+
+    xmlhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        myfunc(xmlhttp.responseText);
+      }
+    };
+    xmlhttp.open("GET", endpoint, false);
+    xmlhttp.send();
+
+    function myfunc(resp) {
+      var arr = JSON.parse(resp);
+      data = arr;
+    }
+    // let dataArr = await loadData(endpoint);
+
+
+    const inputElement = document.querySelector('.search');
+    inputElement.addEventListener('input', (event) => handleChange(event));
+
+    const retHlElement = (target, search) => {
+      const len = search.length;
+      let targetStringIdx = 0;
+      const ret = document.createElement('span');
+      for (let i = 0; i < target.length; i++) {
+        const startIdx = String(target).toUpperCase().indexOf(search.toUpperCase(), i);
+        if (startIdx !== -1) {
+          // 하이라이트 전까지 일반 span
+          ret.append(String(target).substring(targetStringIdx, startIdx));
+          // 하이라이트
+          const tmp = document.createElement('span');
+          tmp.textContent = String(target).substring(startIdx, startIdx + len);
+          tmp.className = 'hl'
+          ret.appendChild(tmp);
+          i = startIdx + len - 1
+          targetStringIdx = startIdx + len;
+        } else {
+          // tmp = document.createElement('span');
+          ret.append((target).substring(targetStringIdx));
+          // tmp.textContent = String(target).substring(targetStringIdx);
+          break;
+        }
+      }
+      return ret;
+    }
+
+    const handleChange = async (e) => {
+      // 기존 리스트 제거 
+      document.querySelector('.suggestions').remove();
+      const listElement = document.createElement('ul');
+      listElement.className = 'suggestions';
+      document.querySelector('.search-form').appendChild(listElement);
+
+      // const ulElements = document.querySelectorAll('.suggestions > li');
+      // ulElements.forEach(e => e.remove());
+
+      const inputValue = String(inputElement.value).toUpperCase();
+      const valueLen = inputValue.length;
+      // 리스트에서 포함한애들 배열 반환
+      const includeKeywords = data.filter(value => {
+        if (value.city.toUpperCase().includes(inputValue)) return true;
+        if (value.state.toUpperCase().includes(inputValue)) return true;
+        return false;
+      });
+      // 반복
+      includeKeywords.forEach((value, index) => {
+        // const startIdx = value.indexOf(inputValue);
+        const liElement = document.createElement('li');
+        let element = retHlElement(`${value.city}, ${value.state}`, inputValue);
+        liElement.appendChild(element)
+
+        // const liText = document.createElement('span');
+        // liText.textContent = `${value.city}, ${value.state}`
+        const populationText = document.createElement('span');
+        populationText.className = 'population'
+        populationText.textContent = `${Number(value.population).toLocaleString()}`;
+        liElement.appendChild(populationText);
+        listElement.appendChild(liElement)
+      })
+    }
+  </script>
+</body>
+
+</html>
