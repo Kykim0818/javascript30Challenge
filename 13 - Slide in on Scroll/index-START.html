@@ -147,23 +147,22 @@
   <script>
     // sol 1. use navtive api
     // define an observer instance
-    var observer = new IntersectionObserver(debounce(onIntersection), {
-      root: null,   // default is the viewport
-      threshold: .5 // percentage of target's visible area. Triggers "onIntersection"
-    })
+    // var observer = new IntersectionObserver(debounce(onIntersection), {
+    //   root: null,   // default is the viewport
+    //   threshold: .5 // percentage of target's visible area. Triggers "onIntersection"
+    // })
 
-    // callback is called on intersection change
-    function onIntersection(entries, opts) {
-      entries.forEach(entry =>
-        entry.target.classList.toggle('active', entry.isIntersecting)
-      )
-    }
+    // // callback is called on intersection change
+    // function onIntersection(entries, opts) {
+    //   entries.forEach(entry =>
+    //     entry.target.classList.toggle('active', entry.isIntersecting)
+    //   )
+    // }
 
-    // Use the observer to observe an element
-    document.querySelectorAll('.align-left,.align-right').forEach((ele) => {
-      observer.observe(ele)
-    })
-
+    // // Use the observer to observe an element
+    // document.querySelectorAll('.align-left,.align-right').forEach((ele) => {
+    //   observer.observe(ele)
+    // })
 
     function debounce(func, wait = 20, immediate = true) {
       var timeout;
@@ -180,6 +179,30 @@
       };
     }
 
+    const images = document.querySelectorAll('.slide-in');
+    function handleScroll(e) {
+
+      // console.log('e', e);
+      // console.log('scrollY', window.scrollY);
+      // rect = images[0].getBoundingClientRect();
+      // if (widow.scrollY > (rect.top + rect.height / 2) - window.innerHeight)
+
+      images.forEach((ele) => {
+        const rect = ele.getBoundingClientRect();
+        // 절반 출현 조건
+        const isHalfShown = window.innerHeight + window.scrollY > (rect.top + rect.height / 2)
+        const isNotScrolledPast = window.scrollY < rect.bottom
+        if (isHalfShown && isNotScrolledPast) {
+          ele.classList.add('active')
+        }
+        if (rect.top < 0 && Math.abs(rect.top) > rect.height - 30) {
+          ele.classList.remove('active')
+        }
+      })
+    }
+    document.addEventListener('scroll', (e) => {
+      debounce(handleScroll(e));
+    })
 
 
   </script>
